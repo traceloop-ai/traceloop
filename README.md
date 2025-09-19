@@ -1,26 +1,39 @@
-# Traceloop
+# Traceloop AI
 
-**Production observability for AI agents**
+**Local-first observability platform for AI agents. Monitor, debug, and improve your LLM applications with confidence.**
 
 [![CI](https://github.com/traceloop-ai/traceloop/workflows/CI/badge.svg)](https://github.com/traceloop-ai/traceloop/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/traceloop-ai/traceloop)](https://goreportcard.com/report/github.com/traceloop-ai/traceloop)
 [![Coverage](https://codecov.io/gh/traceloop-ai/traceloop/branch/main/graph/badge.svg)](https://codecov.io/gh/traceloop-ai/traceloop)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Traceloop provides comprehensive observability and monitoring for AI agents, offering trace collection, visualization, and performance analytics for production AI systems.
+Traceloop provides comprehensive observability and monitoring for AI agents, offering trace collection, visualization, and performance analytics for production AI systems. Built with privacy and control in mind - your data never leaves your machine.
 
 **🌐 Official Domains:** [traceloop-ai.dev](https://traceloop-ai.dev) | [traceloop-ai.io](https://traceloop-ai.io) | [traceloop-ai.ai](https://traceloop-ai.ai)
 
 ## 🚀 Features
 
-- **🔍 Comprehensive Tracing**: Automatic instrumentation for popular AI frameworks
-- **📊 Real-time Dashboard**: Beautiful web interface for trace visualization
-- **🎯 Agent-specific Insights**: Purpose-built for AI agent observability
-- **⚡ High Performance**: Minimal overhead with efficient data collection
-- **🔧 Easy Integration**: Simple SDKs for Python, JavaScript, and more
-- **📈 Production Ready**: Scales from development to enterprise deployments
+- **🔍 Complete Trace Visibility** - See every LLM call, tool use, and decision
+- **💻 Local-First** - Your data never leaves your machine
+- **🚀 Production Ready** - From local development to cloud deployment  
+- **🔧 Framework Agnostic** - Works with LangChain, CrewAI, raw OpenAI, and more
+- **📊 Real-time Dashboard** - Beautiful web interface for trace visualization
+- **⚡ High Performance** - Minimal overhead with efficient data collection
+- **🎯 Agent-specific Insights** - Purpose-built for AI agent observability
+
+## 💻 Why Local-First?
+
+**Privacy & Control**: Your AI traces, prompts, and responses stay on your machine. No data sent to external services.
+
+**Performance**: Zero network latency for trace collection and analysis.
+
+**Compliance**: Meet strict data governance requirements with complete data sovereignty.
+
+**Offline Ready**: Work without internet connection - perfect for sensitive environments.
 
 ## 📦 Quick Start
+
+**Get started with Traceloop in under 2 minutes - everything runs locally on your machine.**
 
 ### Server Installation
 
@@ -69,7 +82,9 @@ def call_llm(prompt: str) -> str:
     return "AI response"
 ```
 
-## 🏗️ Architecture
+## 🏗️ Local-First Architecture
+
+**Everything runs on your machine - no external dependencies or data transmission.**
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -78,20 +93,24 @@ def call_llm(prompt: str) -> str:
 └─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘
           │                      │                      │
           └──────────────┬───────────────────────────────┘
-                         │ gRPC/HTTP
+                         │ gRPC/HTTP (localhost)
                          ▼
           ┌─────────────────────────────────┐
-          │        Traceloop Server         │
+          │     Traceloop Server (Local)    │
           │  ┌─────────────┬─────────────┐ │
           │  │ Trace API   │   Web UI    │ │
           │  └─────────────┴─────────────┘ │
           │  ┌─────────────────────────────┐ │
-          │  │      Storage Layer          │ │
+          │  │   Local Storage (BadgerDB)  │ │
           │  └─────────────────────────────┘ │
           └─────────────────────────────────┘
 ```
 
+**🔒 Data Sovereignty**: All traces, prompts, and responses stored locally on your machine.
+
 ## 🎯 Use Cases
+
+**Works with any AI framework - LangChain, CrewAI, raw OpenAI, Anthropic, and more.**
 
 ### AI Agent Debugging
 ```python
