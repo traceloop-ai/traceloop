@@ -9,6 +9,8 @@
 
 Traceloop provides comprehensive observability and monitoring for AI agents, offering trace collection, visualization, and performance analytics for production AI systems.
 
+**🌐 Official Domains:** [traceloop-ai.dev](https://traceloop-ai.dev) | [traceloop-ai.io](https://traceloop-ai.io) | [traceloop-ai.ai](https://traceloop-ai.ai)
+
 ## 🚀 Features
 
 - **🔍 Comprehensive Tracing**: Automatic instrumentation for popular AI frameworks
@@ -301,10 +303,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ## 🆘 Support
 
-- 📖 [Documentation](https://docs.traceloop.ai)
+- 🌐 **Website:** [traceloop-ai.dev](https://traceloop-ai.dev) | [traceloop-ai.io](https://traceloop-ai.io) | [traceloop-ai.ai](https://traceloop-ai.ai)
+- 📖 [Documentation](https://docs.traceloop-ai.dev)
 - 💬 [Discord Community](https://discord.gg/traceloop)
 - 🐛 [GitHub Issues](https://github.com/traceloop-ai/traceloop/issues)
-- 📧 [Email Support](mailto:support@traceloop.ai)
+- 📧 [Email Support](mailto:support@traceloop-ai.dev)
 
 ## 🌟 Roadmap
 
