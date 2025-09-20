@@ -45,14 +45,15 @@ traceloop server
 
 **Using Docker:**
 ```bash
-# Using published image (after first release)
-docker run -p 8080:8080 ghcr.io/traceloop-ai/traceloop:latest
-
-# Or build from source
+# Build from source (recommended)
 git clone https://github.com/traceloop-ai/traceloop.git
 cd traceloop
 docker build -f docker/Dockerfile -t traceloop .
 docker run -p 8080:8080 traceloop
+
+# Using published image (requires GitHub authentication)
+# docker login ghcr.io -u <your-username> -p <your-token>
+# docker run -p 8080:8080 ghcr.io/traceloop-ai/traceloop:latest
 ```
 
 **Using Homebrew:**
