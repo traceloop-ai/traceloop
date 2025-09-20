@@ -113,6 +113,7 @@ func (s *Server) setupRoutes(router *gin.Engine) {
 	api := router.Group("/api/v1")
 	{
 		api.GET("/traces", s.handleGetTraces)
+		api.POST("/traces", s.handleStoreTrace)
 		api.GET("/traces/:id", s.handleGetTrace)
 		api.GET("/stats", s.handleGetStats)
 	}
@@ -133,6 +134,21 @@ func (s *Server) handleGetTraces(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, traces)
+}
+
+func (s *Server) handleStoreTrace(c *gin.Context) {
+	var trace map[string]interface{}
+	if err := c.ShouldBindJSON(&trace); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.StoreTrace(context.Background(), trace); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "stored"})
 }
 
 func (s *Server) handleGetTrace(c *gin.Context) {
