@@ -65,7 +65,13 @@ traceloop server
 ### Python SDK
 
 ```bash
-pip install traceloop
+# Install from source (recommended for now)
+git clone https://github.com/traceloop-ai/traceloop.git
+cd traceloop/sdk/python
+pip install -e .
+
+# Or install from PyPI (coming soon)
+# pip install traceloop
 ```
 
 ```python
