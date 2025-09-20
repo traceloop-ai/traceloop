@@ -1,0 +1,66 @@
+name: Validate Quick Start
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl jq
+        
+    - name: Build Traceloop
+      run: |
+        make build
+        
+    - name: Run validation script
+      run: |
+        chmod +x scripts/validate-quickstart.sh
+        ./scripts/validate-quickstart.sh
+        
+    - name: Upload status report
+      uses: actions/upload-artifact@v3
+      with:
+        name: status-report
+        path: traceloop-website/status.json
+        
+    - name: Update status page
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # Update the status page with latest results
+        if [ -f traceloop-website/status.json ]; then
+          # Generate updated HTML with current status
+          python3 scripts/update-status-page.py
+        fi
+        
+    - name: Commit updated status
+      if: github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add traceloop-website/status.html traceloop-website/status.json
+        git diff --staged --quiet || git commit -m "Update status page with latest validation results"
+        git push
