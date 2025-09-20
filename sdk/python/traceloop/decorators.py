@@ -34,7 +34,7 @@ def trace(
         Decorated function that will be automatically traced
     """
 
-    def decorator(func: F) -> F:
+    def decorator(func: F) -> Any:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             # Determine span name
@@ -134,7 +134,7 @@ def trace_agent(
         Decorated function optimized for agent tracing
     """
 
-    def decorator(func: F) -> F:
+    def decorator(func: F) -> Any:
         agent_attrs = {
             "component.type": "agent",
             "agent.name": agent_name or func.__name__,
@@ -170,7 +170,7 @@ def trace_llm(
         Decorated function optimized for LLM call tracing
     """
 
-    def decorator(func: F) -> F:
+    def decorator(func: F) -> Any:
         llm_attrs = {"component.type": "llm", "llm.model": model_name, **attributes}
 
         return trace(

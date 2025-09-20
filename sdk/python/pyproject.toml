@@ -45,6 +45,7 @@ dev = [
     "isort>=5.10.0",
     "mypy>=1.0.0",
     "flake8>=4.0.0",
+    "types-requests>=2.28.0",
 ]
 langchain = [
     "langchain>=0.1.0",

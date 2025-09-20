@@ -35,10 +35,6 @@ class Span:
     def __post_init__(self):
         if not self.span_id:
             self.span_id = str(uuid.uuid4())
-        if self.events is None:
-            self.events = []
-        if self.attributes is None:
-            self.attributes = {}
 
 
 @dataclass
@@ -57,10 +53,6 @@ class Trace:
     def __post_init__(self):
         if not self.trace_id:
             self.trace_id = str(uuid.uuid4())
-        if self.spans is None:
-            self.spans = []
-        if self.attributes is None:
-            self.attributes = {}
 
 
 @dataclass
@@ -72,8 +64,7 @@ class TraceEvent:
     attributes: Dict[str, Any]
 
     def __post_init__(self):
-        if self.attributes is None:
-            self.attributes = {}
+        pass
 
 
 @dataclass
@@ -86,8 +77,7 @@ class TraceContext:
     attributes: Dict[str, Any]
 
     def __post_init__(self):
-        if self.attributes is None:
-            self.attributes = {}
+        pass
 
 
 # Type aliases for common data structures

@@ -3,7 +3,7 @@ Context management for traces and spans.
 """
 
 import threading
-from typing import Optional
+from typing import Any, Optional
 
 from .types import TraceContext
 
@@ -36,11 +36,12 @@ def create_span_context(name: str, trace_id: str) -> str:
     return span_id
 
 
-def get_span_context(span_id: str) -> Optional[dict]:
+def get_span_context(span_id: str) -> Optional[dict[Any, Any]]:
     """Get span context by ID."""
     if not hasattr(_context, "spans"):
         return None
-    return _context.spans.get(span_id)
+    result = _context.spans.get(span_id)
+    return result if result is not None else None
 
 
 def set_trace_attribute(key: str, value):
