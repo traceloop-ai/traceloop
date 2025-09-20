@@ -18,7 +18,7 @@ BUILD_DIR := ./build
 DOCKER_IMAGE := ghcr.io/traceloop-ai/traceloop
 
 # Go configuration
-GO_VERSION := 1.21
+GO_VERSION := 1.24
 GOFLAGS := -mod=readonly
 LDFLAGS := -s -w -X main.version=$(shell git describe --tags --always --dirty) -X main.commit=$(shell git rev-parse HEAD)
 
