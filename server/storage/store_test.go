@@ -9,7 +9,7 @@ import (
 func TestBadgerStore_GetTraces(t *testing.T) {
 	// Clean up any existing test data
 	os.RemoveAll("/tmp/traceloop-test")
-	
+
 	// Create a temporary store
 	store, err := NewBadgerStore("/tmp/traceloop-test")
 	if err != nil {
@@ -35,7 +35,7 @@ func TestBadgerStore_GetTraces(t *testing.T) {
 func TestBadgerStore_GetStats(t *testing.T) {
 	// Clean up any existing test data
 	os.RemoveAll("/tmp/traceloop-test")
-	
+
 	// Create a temporary store
 	store, err := NewBadgerStore("/tmp/traceloop-test")
 	if err != nil {
@@ -61,7 +61,7 @@ func TestBadgerStore_GetStats(t *testing.T) {
 func TestBadgerStore_StoreTrace(t *testing.T) {
 	// Clean up any existing test data
 	os.RemoveAll("/tmp/traceloop-test")
-	
+
 	// Create a temporary store
 	store, err := NewBadgerStore("/tmp/traceloop-test")
 	if err != nil {
