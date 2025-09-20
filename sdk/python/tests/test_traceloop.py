@@ -1,8 +1,10 @@
+from datetime import datetime
+
 import pytest
+
 import traceloop
 from traceloop.client import TraceloopClient
-from traceloop.types import Trace, Span, TraceStatus
-from datetime import datetime
+from traceloop.types import Span, Trace, TraceStatus
 
 
 def test_traceloop_init():
@@ -23,9 +25,9 @@ def test_trace_creation():
         status=TraceStatus.OK,
         spans=[],
         attributes={},
-        service_name="test-service"
+        service_name="test-service",
     )
-    
+
     assert trace.trace_id == "test-trace-1"
     assert trace.name == "test-trace"
     assert trace.service_name == "test-service"
@@ -44,9 +46,9 @@ def test_span_creation():
         end_time=None,
         status=TraceStatus.OK,
         attributes={},
-        events=[]
+        events=[],
     )
-    
+
     assert span.span_id == "test-span-1"
     assert span.trace_id == "test-trace-1"
     assert span.name == "test-span"
@@ -64,9 +66,9 @@ def test_trace_with_spans():
         status=TraceStatus.OK,
         spans=[],
         attributes={},
-        service_name="test-service"
+        service_name="test-service",
     )
-    
+
     span1 = Span(
         span_id="span-1",
         trace_id="test-trace-2",
@@ -76,9 +78,9 @@ def test_trace_with_spans():
         end_time=None,
         status=TraceStatus.OK,
         attributes={},
-        events=[]
+        events=[],
     )
-    
+
     span2 = Span(
         span_id="span-2",
         trace_id="test-trace-2",
@@ -88,11 +90,11 @@ def test_trace_with_spans():
         end_time=None,
         status=TraceStatus.OK,
         attributes={},
-        events=[]
+        events=[],
     )
-    
+
     trace.spans = [span1, span2]
-    
+
     assert len(trace.spans) == 2
     assert trace.spans[0].name == "span-1"
     assert trace.spans[1].name == "span-2"
@@ -103,9 +105,9 @@ def test_client_creation():
     client = TraceloopClient(
         endpoint="http://localhost:8080",
         api_key="test-key",
-        service_name="test-service"
+        service_name="test-service",
     )
-    
+
     assert client.endpoint == "http://localhost:8080"
     assert client.api_key == "test-key"
     assert client.service_name == "test-service"
