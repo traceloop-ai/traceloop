@@ -69,7 +69,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
         restore-keys: |
           ${{ runner.os }}-pip-
           
@@ -126,9 +126,9 @@ jobs:
     - name: Run Python linting
       working-directory: sdk/python
       run: |
-        black --check .
-        isort --check-only .
-        flake8 .
+        black --check traceloop/ tests/
+        isort --check-only traceloop/ tests/
+        flake8 traceloop/ tests/
         mypy traceloop
 
   # Build binaries
