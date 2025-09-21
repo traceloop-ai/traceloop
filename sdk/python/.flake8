@@ -9,3 +9,4 @@ exclude =
     site-packages,
     __pycache__,
     .*
+

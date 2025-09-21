@@ -7,9 +7,7 @@ for AI agents and language model applications.
 
 __version__ = "0.1.0"
 __author__ = "Shailesh Pant"
-__email__ = "shailesh@traceloop.ai"
-
-from typing import Optional
+__email__ = "shailesh@traceloop-ai.dev"
 
 from .client import TraceloopClient
 from .context import get_current_trace, set_trace_attribute
@@ -22,8 +20,8 @@ _default_client = None
 
 def init(
     endpoint: str = "http://localhost:8080",
-    api_key: Optional[str] = None,
-    service_name: Optional[str] = None,
+    api_key: str = None,
+    service_name: str = None,
     **kwargs
 ) -> TraceloopClient:
     """

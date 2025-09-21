@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "traceloop"
 version = "0.1.0"
 authors = [
-    {name = "Shailesh Pant", email = "shailesh@traceloop.ai"},
+    {name = "Shailesh Pant", email = "shailesh@traceloop-ai.dev"},
 ]
 description = "Production observability for AI agents"
 readme = "README.md"
@@ -63,7 +63,7 @@ traceloop = "traceloop.cli:main"
 [project.urls]
 Homepage = "https://github.com/traceloop-ai/traceloop"
 Repository = "https://github.com/traceloop-ai/traceloop"
-Documentation = "https://traceloop.ai"
+Documentation = "https://traceloop-ai.dev"
 "Bug Tracker" = "https://github.com/traceloop-ai/traceloop/issues"
 
 [tool.setuptools.packages.find]

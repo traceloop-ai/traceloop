@@ -231,7 +231,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 - 💬 [Discord Community](https://discord.gg/traceloop)
 - 🐛 [GitHub Issues](https://github.com/traceloop-ai/traceloop/issues)
-- 📧 [Email](mailto:dev@traceloop.ai)
+- 📧 [Email](mailto:dev@traceloop-ai.dev)
 
 ## 🏆 Recognition
 
