@@ -1,0 +1,48 @@
+{
+    "last_updated": "2025-09-21T19:25:41Z",
+    "overall_status": "working",
+    "working_count": 10,
+    "total_count": 10,
+    "tests": {
+        "go_install": {
+            "status": "working",
+            "notes": ""
+        },
+        "docker_install": {
+            "status": "working",
+            "notes": ""
+        },
+        "homebrew_install": {
+            "status": "working",
+            "notes": "Homebrew available (tap not yet published)"
+        },
+        "server_health": {
+            "status": "working",
+            "notes": ""
+        },
+        "server_traces_api": {
+            "status": "working",
+            "notes": ""
+        },
+        "server_stats_api": {
+            "status": "working",
+            "notes": ""
+        },
+        "python_install": {
+            "status": "working",
+            "notes": ""
+        },
+        "python_import": {
+            "status": "working",
+            "notes": ""
+        },
+        "simple_example": {
+            "status": "working",
+            "notes": ""
+        },
+        "test_script": {
+            "status": "working",
+            "notes": ""
+        }
+    }
+}
