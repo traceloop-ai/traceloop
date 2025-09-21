@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # Configuration
 SERVER_PORT=8080
 SERVER_HOST="localhost"
-PYTHON_VENV="sdk/python/venv"
+PYTHON_VENV="venv"
 STATUS_FILE="../traceloop-website/status.json"
 
 # Status tracking variables
@@ -191,7 +191,7 @@ test_python_sdk() {
     
     # Activate virtual environment and install
     source $PYTHON_VENV/bin/activate
-    if pip install -e sdk/python &> /dev/null; then
+    if pip install -e . &> /dev/null; then
         PYTHON_INSTALL_STATUS="working"
         log_success "Python SDK installation works"
     else
@@ -233,7 +233,7 @@ test_examples() {
     fi
     
     # Test test script
-    if python3 test_python_sdk.py &> /dev/null; then
+    if python3 sdk/python/test_python_sdk.py &> /dev/null; then
         TEST_SCRIPT_STATUS="working"
         log_success "Test script works"
     else
