@@ -9,7 +9,7 @@ from datetime import datetime
 
 def load_status_data():
     """Load status data from JSON file"""
-    status_file = "traceloop-website/status.json"
+    status_file = "../traceloop-website/status.json"
     if os.path.exists(status_file):
         with open(status_file, 'r') as f:
             return json.load(f)
@@ -17,7 +17,7 @@ def load_status_data():
 
 def update_status_html(status_data):
     """Update the status.html file with latest data"""
-    html_file = "traceloop-website/status.html"
+    html_file = "../traceloop-website/status.html"
     
     if not os.path.exists(html_file):
         print(f"Status HTML file not found: {html_file}")
