@@ -16,7 +16,8 @@ NC='\033[0m' # No Color
 SERVER_PORT=8080
 SERVER_HOST="localhost"
 PYTHON_VENV="venv"
-# Status file generation removed - traceloop-website is a separate repo
+# Status file for website consumption
+STATUS_FILE="status.json"
 
 # Status tracking variables
 GO_INSTALL_STATUS="unknown"
@@ -248,7 +249,86 @@ test_examples() {
     wait $SERVER_PID 2>/dev/null || true
 }
 
-# Status report generation removed - not needed for CI validation
+generate_status_report() {
+    log_info "Generating status report..."
+    
+    # Calculate overall status
+    local working_count=0
+    local total_count=0
+    
+    # Count working tests
+    for status in "$GO_INSTALL_STATUS" "$DOCKER_INSTALL_STATUS" "$HOMEBREW_INSTALL_STATUS" \
+                  "$SERVER_HEALTH_STATUS" "$SERVER_TRACES_API_STATUS" "$SERVER_STATS_API_STATUS" \
+                  "$PYTHON_INSTALL_STATUS" "$PYTHON_IMPORT_STATUS" "$SIMPLE_EXAMPLE_STATUS" "$TEST_SCRIPT_STATUS"; do
+        total_count=$((total_count + 1))
+        if [ "$status" = "working" ]; then
+            working_count=$((working_count + 1))
+        fi
+    done
+    
+    local overall_status="partial"
+    if [ $working_count -eq $total_count ]; then
+        overall_status="working"
+    elif [ $working_count -gt $((total_count / 2)) ]; then
+        overall_status="partial"
+    else
+        overall_status="broken"
+    fi
+    
+    # Generate JSON status report
+    cat > $STATUS_FILE << EOF
+{
+    "last_updated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+    "overall_status": "$overall_status",
+    "working_count": $working_count,
+    "total_count": $total_count,
+    "tests": {
+        "go_install": {
+            "status": "$GO_INSTALL_STATUS",
+            "notes": "$GO_INSTALL_NOTES"
+        },
+        "docker_install": {
+            "status": "$DOCKER_INSTALL_STATUS",
+            "notes": "$DOCKER_INSTALL_NOTES"
+        },
+        "homebrew_install": {
+            "status": "$HOMEBREW_INSTALL_STATUS",
+            "notes": "$HOMEBREW_INSTALL_NOTES"
+        },
+        "server_health": {
+            "status": "$SERVER_HEALTH_STATUS",
+            "notes": "$SERVER_HEALTH_NOTES"
+        },
+        "server_traces_api": {
+            "status": "$SERVER_TRACES_API_STATUS",
+            "notes": "$SERVER_TRACES_API_NOTES"
+        },
+        "server_stats_api": {
+            "status": "$SERVER_STATS_API_STATUS",
+            "notes": "$SERVER_STATS_API_NOTES"
+        },
+        "python_install": {
+            "status": "$PYTHON_INSTALL_STATUS",
+            "notes": "$PYTHON_INSTALL_NOTES"
+        },
+        "python_import": {
+            "status": "$PYTHON_IMPORT_STATUS",
+            "notes": "$PYTHON_IMPORT_NOTES"
+        },
+        "simple_example": {
+            "status": "$SIMPLE_EXAMPLE_STATUS",
+            "notes": "$SIMPLE_EXAMPLE_NOTES"
+        },
+        "test_script": {
+            "status": "$TEST_SCRIPT_STATUS",
+            "notes": "$TEST_SCRIPT_NOTES"
+        }
+    }
+}
+EOF
+
+    log_success "Status report generated: $STATUS_FILE"
+}
 
 # Main execution
 main() {
@@ -265,6 +345,9 @@ main() {
     test_server_startup
     test_python_sdk
     test_examples
+    
+    # Generate status report for website
+    generate_status_report
     
     # Print summary
     echo ""
