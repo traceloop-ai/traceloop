@@ -16,15 +16,7 @@ NC='\033[0m' # No Color
 SERVER_PORT=8080
 SERVER_HOST="localhost"
 PYTHON_VENV="venv"
-# Try different possible paths for status file
-if [ -d "../traceloop-website" ]; then
-    STATUS_FILE="../traceloop-website/status.json"
-elif [ -d "traceloop-website" ]; then
-    STATUS_FILE="traceloop-website/status.json"
-else
-    # Fallback to current directory if neither path exists
-    STATUS_FILE="status.json"
-fi
+# Status file generation removed - traceloop-website is a separate repo
 
 # Status tracking variables
 GO_INSTALL_STATUS="unknown"
@@ -256,14 +248,44 @@ test_examples() {
     wait $SERVER_PID 2>/dev/null || true
 }
 
-generate_status_report() {
-    log_info "Generating status report..."
+# Status report generation removed - not needed for CI validation
+
+# Main execution
+main() {
+    log_info "Starting Traceloop Quick Start Validation"
+    echo "=============================================="
     
-    # Calculate overall status
+    # Change to project root
+    cd "$(dirname "$0")/.."
+    
+    # Run all tests
+    test_go_installation
+    test_docker_installation
+    test_homebrew_installation
+    test_server_startup
+    test_python_sdk
+    test_examples
+    
+    # Print summary
+    echo ""
+    echo "=============================================="
+    echo "Validation Summary:"
+    echo "=============================================="
+    echo "Go Installation: $GO_INSTALL_STATUS"
+    echo "Docker Installation: $DOCKER_INSTALL_STATUS"
+    echo "Homebrew Installation: $HOMEBREW_INSTALL_STATUS"
+    echo "Server Health: $SERVER_HEALTH_STATUS"
+    echo "Server Traces API: $SERVER_TRACES_API_STATUS"
+    echo "Server Stats API: $SERVER_STATS_API_STATUS"
+    echo "Python SDK Install: $PYTHON_INSTALL_STATUS"
+    echo "Python SDK Import: $PYTHON_IMPORT_STATUS"
+    echo "Simple Example: $SIMPLE_EXAMPLE_STATUS"
+    echo "Test Script: $TEST_SCRIPT_STATUS"
+    echo ""
+    
+    # Count working tests for overall status
     local working_count=0
     local total_count=0
-    
-    # Count working tests
     for status in "$GO_INSTALL_STATUS" "$DOCKER_INSTALL_STATUS" "$HOMEBREW_INSTALL_STATUS" \
                   "$SERVER_HEALTH_STATUS" "$SERVER_TRACES_API_STATUS" "$SERVER_STATS_API_STATUS" \
                   "$PYTHON_INSTALL_STATUS" "$PYTHON_IMPORT_STATUS" "$SIMPLE_EXAMPLE_STATUS" "$TEST_SCRIPT_STATUS"; do
@@ -282,87 +304,6 @@ generate_status_report() {
         overall_status="broken"
     fi
     
-    # Ensure directory exists for status file
-    mkdir -p "$(dirname "$STATUS_FILE")"
-    
-    # Generate JSON status report
-    cat > $STATUS_FILE << EOF
-{
-    "last_updated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-    "overall_status": "$overall_status",
-    "working_count": $working_count,
-    "total_count": $total_count,
-    "tests": {
-        "go_install": {
-            "status": "$GO_INSTALL_STATUS",
-            "notes": "$GO_INSTALL_NOTES"
-        },
-        "docker_install": {
-            "status": "$DOCKER_INSTALL_STATUS",
-            "notes": "$DOCKER_INSTALL_NOTES"
-        },
-        "homebrew_install": {
-            "status": "$HOMEBREW_INSTALL_STATUS",
-            "notes": "$HOMEBREW_INSTALL_NOTES"
-        },
-        "server_health": {
-            "status": "$SERVER_HEALTH_STATUS",
-            "notes": "$SERVER_HEALTH_NOTES"
-        },
-        "server_traces_api": {
-            "status": "$SERVER_TRACES_API_STATUS",
-            "notes": "$SERVER_TRACES_API_NOTES"
-        },
-        "server_stats_api": {
-            "status": "$SERVER_STATS_API_STATUS",
-            "notes": "$SERVER_STATS_API_NOTES"
-        },
-        "python_install": {
-            "status": "$PYTHON_INSTALL_STATUS",
-            "notes": "$PYTHON_INSTALL_NOTES"
-        },
-        "python_import": {
-            "status": "$PYTHON_IMPORT_STATUS",
-            "notes": "$PYTHON_IMPORT_NOTES"
-        },
-        "simple_example": {
-            "status": "$SIMPLE_EXAMPLE_STATUS",
-            "notes": "$SIMPLE_EXAMPLE_NOTES"
-        },
-        "test_script": {
-            "status": "$TEST_SCRIPT_STATUS",
-            "notes": "$TEST_SCRIPT_NOTES"
-        }
-    }
-}
-EOF
-
-    log_success "Status report generated: $STATUS_FILE"
-}
-
-# Main execution
-main() {
-    log_info "Starting Traceloop Quick Start Validation"
-    echo "=============================================="
-    
-    # Change to project root
-    cd "$(dirname "$0")/.."
-    
-    # Run all tests
-    test_go_installation
-    test_docker_installation
-    test_homebrew_installation
-    test_server_startup
-    test_python_sdk
-    test_examples
-    
-    # Generate report
-    generate_status_report
-    
-    # Print summary
-    echo ""
-    echo "=============================================="
-    log_info "Validation Summary:"
     echo "Working: $working_count/$total_count"
     echo "Overall Status: $overall_status"
     echo ""
@@ -374,9 +315,6 @@ main() {
     else
         log_error "Multiple quick start steps are broken ❌"
     fi
-    
-    echo ""
-    log_info "Detailed status report saved to: $STATUS_FILE"
 }
 
 # Run main function
