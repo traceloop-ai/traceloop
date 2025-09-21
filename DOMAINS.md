@@ -81,7 +81,7 @@ demo.traceloop-ai.ai CNAME traceloop-ai.ai
 
 - **Multi-language support** for international users
 - **Regional domains** for better performance
-- **Custom TLD** consideration (traceloop.ai)
+- **Custom TLD** consideration (alternative domains)
 - **Subdomain expansion** as features grow
 
 ---
