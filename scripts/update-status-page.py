@@ -33,10 +33,11 @@ def update_status_html(status_data):
     
     # Update last updated time
     last_updated = status_data.get('last_updated', datetime.now().isoformat())
-    html_content = html_content.replace(
-        'id="lastUpdated">Loading...</span>',
-        f'id="lastUpdated">{last_updated}</span>'
-    )
+    # Find and replace the last updated time in the HTML
+    import re
+    pattern = r'id="lastUpdated">[^<]*</span>'
+    replacement = f'id="lastUpdated">{last_updated}</span>'
+    html_content = re.sub(pattern, replacement, html_content)
     
     # Update overall status
     overall_status = status_data.get('overall_status', 'unknown')
@@ -75,15 +76,35 @@ def update_status_html(status_data):
             elif test_status == "partial":
                 status_class = "status-partial"
             
-            # Update status indicator
-            pattern = f'<span class="step-name">{test_name}</span>'
-            replacement = f'''<span class="step-name">{test_name}</span>
-                        <div class="step-status">
-                            <span class="status-indicator {status_class}"></span>
-                            <span>{test_status.title()}</span>
-                        </div>'''
-            
-            html_content = html_content.replace(pattern, replacement)
+            # Find the step item with data-test attribute
+            pattern = rf'<li class="step-item" data-test="{test_key}">.*?</li>'
+            match = re.search(pattern, html_content, re.DOTALL)
+            if match:
+                # Extract the existing step item
+                step_item = match.group(0)
+                
+                # Update the status indicator and text
+                step_item = re.sub(
+                    r'<span class="status-indicator status-unknown"></span>',
+                    f'<span class="status-indicator {status_class}"></span>',
+                    step_item
+                )
+                step_item = re.sub(
+                    r'<span class="status-text">Loading\.\.\.</span>',
+                    f'<span class="status-text">{test_status.title()}</span>',
+                    step_item
+                )
+                
+                # Update notes if available
+                if test_notes and test_notes.strip():
+                    step_item = re.sub(
+                        r'<div class="step-notes"></div>',
+                        f'<div class="step-notes">{test_notes}</div>',
+                        step_item
+                    )
+                
+                # Replace the step item in the HTML
+                html_content = html_content.replace(match.group(0), step_item)
     
     # Update overall status section
     overall_status_text = "Core functionality working"

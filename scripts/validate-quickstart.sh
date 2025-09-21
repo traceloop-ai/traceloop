@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 SERVER_PORT=8080
 SERVER_HOST="localhost"
 PYTHON_VENV="venv"
-# Status file for website consumption
+# Status file for website consumption - generate in traceloop repo root
 STATUS_FILE="status.json"
 
 # Status tracking variables

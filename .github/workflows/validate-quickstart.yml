@@ -3,6 +3,9 @@ name: Validate Quick Start
 on:
   push:
     branches: [ main, develop ]
+    # Only run on pushes that don't contain [skip ci] and are not status updates
+    paths-ignore:
+      - 'status.json'
   pull_request:
     branches: [ main ]
   schedule:
@@ -45,22 +48,23 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: status-report
-        path: traceloop-website/status.json
-        
-    - name: Update status page
-      if: github.ref == 'refs/heads/main'
-      run: |
-        # Update the status page with latest results
-        if [ -f traceloop-website/status.json ]; then
-          # Generate updated HTML with current status
-          python3 scripts/update-status-page.py
-        fi
+        path: status.json
         
     - name: Commit updated status
       if: github.ref == 'refs/heads/main'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add traceloop-website/status.html traceloop-website/status.json
-        git diff --staged --quiet || git commit -m "Update status page with latest validation results"
-        git push
+        
+        # Add status.json if it exists and has changes
+        if [ -f status.json ]; then
+          git add status.json
+        fi
+        
+        # Commit only if there are changes
+        if ! git diff --staged --quiet; then
+          git commit -m "Update status.json with latest validation results"
+          git push
+        else
+          echo "No changes to commit"
+        fi
