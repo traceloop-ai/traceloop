@@ -25,7 +25,7 @@ LDFLAGS := -s -w -X main.version=$(shell git describe --tags --always --dirty) -
 # Python configuration  
 PYTHON := python3
 PIP := pip3
-VENV_DIR := .venv
+VENV_DIR := venv
 
 # Colors for output
 RED := \033[31m

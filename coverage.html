@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>traceloop: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/traceloop-ai/traceloop/cmd/traceloop/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/traceloop-ai/traceloop/server/grpc/server.go (0.0%)</option>
+				
+				<option value="file2">github.com/traceloop-ai/traceloop/server/server.go (0.0%)</option>
+				
+				<option value="file3">github.com/traceloop-ai/traceloop/server/storage/store.go (57.1%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "fmt"
+        "log"
+
+        "github.com/spf13/cobra"
+        "github.com/traceloop-ai/traceloop/server"
+)
+
+var (
+        version = "0.1.0"
+        commit  = "dev"
+)
+
+func main() <span class="cov0" title="0">{
+        rootCmd := &amp;cobra.Command{
+                Use:   "traceloop",
+                Short: "Production observability for AI agents",
+                Long: `Traceloop provides comprehensive observability and monitoring 
+for AI agents, offering trace collection, visualization, 
+and performance analytics for production AI systems.`,
+                Version: fmt.Sprintf("%s (%s)", version, commit),
+        }
+
+        rootCmd.AddCommand(serverCmd())
+        rootCmd.AddCommand(versionCmd())
+
+        if err := rootCmd.Execute(); err != nil </span><span class="cov0" title="0">{
+                log.Fatal(err)
+        }</span>
+}
+
+func serverCmd() *cobra.Command <span class="cov0" title="0">{
+        var port int
+        var host string
+
+        cmd := &amp;cobra.Command{
+                Use:   "server",
+                Short: "Start the traceloop server",
+                Long:  "Start the traceloop server to collect and serve trace data",
+                RunE: func(cmd *cobra.Command, args []string) error </span><span class="cov0" title="0">{
+                        config := server.Config{
+                                Host: host,
+                                Port: port,
+                        }
+                        return server.Start(config)
+                }</span>,
+        }
+
+        <span class="cov0" title="0">cmd.Flags().IntVarP(&amp;port, "port", "p", 8080, "Port to run the server on")
+        cmd.Flags().StringVar(&amp;host, "host", "localhost", "Host to bind the server to")
+
+        return cmd</span>
+}
+
+func versionCmd() *cobra.Command <span class="cov0" title="0">{
+        return &amp;cobra.Command{
+                Use:   "version",
+                Short: "Print version information",
+                Run: func(cmd *cobra.Command, args []string) </span><span class="cov0" title="0">{
+                        fmt.Printf("traceloop version %s (%s)\n", version, commit)
+                }</span>,
+        }
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package grpc
+
+import (
+        "fmt"
+        "log"
+        "net"
+
+        "google.golang.org/grpc"
+        "google.golang.org/grpc/reflection"
+)
+
+// Server represents the gRPC server
+type Server struct {
+        grpcServer *grpc.Server
+        store      Store
+}
+
+// Store interface for data storage
+type Store interface {
+        // Add methods that the gRPC server needs
+        Close() error
+}
+
+// NewServer creates a new gRPC server
+func NewServer(store Store) (*Server, error) <span class="cov0" title="0">{
+        grpcServer := grpc.NewServer()
+
+        // Register services here when we implement them
+        // For now, just enable reflection for testing
+        reflection.Register(grpcServer)
+
+        return &amp;Server{
+                grpcServer: grpcServer,
+                store:      store,
+        }, nil
+}</span>
+
+// Start starts the gRPC server
+func (s *Server) Start(port int) error <span class="cov0" title="0">{
+        lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to listen on port %d: %w", port, err)
+        }</span>
+
+        <span class="cov0" title="0">log.Printf("gRPC server listening on port %d", port)
+
+        if err := s.grpcServer.Serve(lis); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to serve gRPC: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+// Stop stops the gRPC server
+func (s *Server) Stop() <span class="cov0" title="0">{
+        if s.grpcServer != nil </span><span class="cov0" title="0">{
+                s.grpcServer.GracefulStop()
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package server
+
+import (
+        "context"
+        "fmt"
+        "log"
+        "net/http"
+        "os"
+        "os/signal"
+        "syscall"
+        "time"
+
+        "github.com/gin-gonic/gin"
+        "github.com/traceloop-ai/traceloop/server/grpc"
+        "github.com/traceloop-ai/traceloop/server/storage"
+)
+
+// Config holds the server configuration
+type Config struct {
+        Host string
+        Port int
+}
+
+// Server represents the main traceloop server
+type Server struct {
+        config  Config
+        storage storage.Store
+        grpc    *grpc.Server
+        http    *http.Server
+}
+
+// Start initializes and starts the traceloop server
+func Start(config Config) error <span class="cov0" title="0">{
+        // Initialize storage
+        store, err := storage.NewBadgerStore("./data")
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to initialize storage: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">server := &amp;Server{
+                config:  config,
+                storage: store,
+        }
+
+        // Start gRPC server for SDK communication
+        grpcServer, err := grpc.NewServer(store)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to create gRPC server: %w", err)
+        }</span>
+        <span class="cov0" title="0">server.grpc = grpcServer
+
+        // Start HTTP server for REST API and web UI
+        router := gin.Default()
+        server.setupRoutes(router)
+
+        httpServer := &amp;http.Server{
+                Addr:    fmt.Sprintf("%s:%d", config.Host, config.Port),
+                Handler: router,
+        }
+        server.http = httpServer
+
+        // Start servers in goroutines
+        go func() </span><span class="cov0" title="0">{
+                log.Printf("Starting gRPC server on port %d", config.Port+1)
+                if err := server.grpc.Start(config.Port + 1); err != nil </span><span class="cov0" title="0">{
+                        log.Printf("gRPC server error: %v", err)
+                }</span>
+        }()
+
+        <span class="cov0" title="0">go func() </span><span class="cov0" title="0">{
+                log.Printf("Starting HTTP server on %s", httpServer.Addr)
+                if err := httpServer.ListenAndServe(); err != nil &amp;&amp; err != http.ErrServerClosed </span><span class="cov0" title="0">{
+                        log.Printf("HTTP server error: %v", err)
+                }</span>
+        }()
+
+        // Wait for interrupt signal to gracefully shutdown
+        <span class="cov0" title="0">quit := make(chan os.Signal, 1)
+        signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+        &lt;-quit
+
+        log.Println("Shutting down server...")
+
+        // Create a deadline for shutdown
+        ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+        defer cancel()
+
+        // Shutdown HTTP server
+        if err := server.http.Shutdown(ctx); err != nil </span><span class="cov0" title="0">{
+                log.Printf("HTTP server forced to shutdown: %v", err)
+        }</span>
+
+        // Shutdown gRPC server
+        <span class="cov0" title="0">server.grpc.Stop()
+
+        // Close storage
+        if err := server.storage.Close(); err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error closing storage: %v", err)
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Server exited")
+        return nil</span>
+}
+
+// setupRoutes configures the HTTP routes
+func (s *Server) setupRoutes(router *gin.Engine) <span class="cov0" title="0">{
+        // Health check
+        router.GET("/health", func(c *gin.Context) </span><span class="cov0" title="0">{
+                c.JSON(http.StatusOK, gin.H{"status": "ok"})
+        }</span>)
+
+        // API routes
+        <span class="cov0" title="0">api := router.Group("/api/v1")
+        </span><span class="cov0" title="0">{
+                api.GET("/traces", s.handleGetTraces)
+                api.POST("/traces", s.handleStoreTrace)
+                api.GET("/traces/:id", s.handleGetTrace)
+                api.GET("/stats", s.handleGetStats)
+        }</span>
+
+        // Serve static files for dashboard
+        <span class="cov0" title="0">router.Static("/static", "./web/dashboard/build/static")
+        router.StaticFile("/", "./web/dashboard/build/index.html")
+        router.NoRoute(func(c *gin.Context) </span><span class="cov0" title="0">{
+                c.File("./web/dashboard/build/index.html")
+        }</span>)
+}
+
+// HTTP handlers
+func (s *Server) handleGetTraces(c *gin.Context) <span class="cov0" title="0">{
+        traces, err := s.storage.GetTraces(context.Background(), 100)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">c.JSON(http.StatusOK, traces)</span>
+}
+
+func (s *Server) handleStoreTrace(c *gin.Context) <span class="cov0" title="0">{
+        var trace map[string]interface{}
+        if err := c.ShouldBindJSON(&amp;trace); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if err := s.storage.StoreTrace(context.Background(), trace); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"status": "stored"})</span>
+}
+
+func (s *Server) handleGetTrace(c *gin.Context) <span class="cov0" title="0">{
+        id := c.Param("id")
+        trace, err := s.storage.GetTrace(context.Background(), id)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "trace not found"})
+                return
+        }</span>
+        <span class="cov0" title="0">c.JSON(http.StatusOK, trace)</span>
+}
+
+func (s *Server) handleGetStats(c *gin.Context) <span class="cov0" title="0">{
+        stats, err := s.storage.GetStats(context.Background())
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">c.JSON(http.StatusOK, stats)</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package storage
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+        "path/filepath"
+
+        "github.com/dgraph-io/badger/v4"
+)
+
+// Store interface defines the storage operations
+type Store interface {
+        GetTraces(ctx context.Context, limit int) ([]map[string]interface{}, error)
+        GetTrace(ctx context.Context, id string) (map[string]interface{}, error)
+        GetStats(ctx context.Context) (map[string]interface{}, error)
+        StoreTrace(ctx context.Context, trace map[string]interface{}) error
+        Close() error
+}
+
+// BadgerStore implements the Store interface using BadgerDB
+type BadgerStore struct {
+        db *badger.DB
+}
+
+// NewBadgerStore creates a new BadgerDB-based store
+func NewBadgerStore(dataDir string) (*BadgerStore, error) <span class="cov10" title="3">{
+        opts := badger.DefaultOptions(filepath.Join(dataDir, "traceloop"))
+        opts.Logger = nil // Disable BadgerDB logging for now
+
+        db, err := badger.Open(opts)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to open BadgerDB: %w", err)
+        }</span>
+
+        <span class="cov10" title="3">return &amp;BadgerStore{db: db}, nil</span>
+}
+
+// Close closes the store
+func (s *BadgerStore) Close() error <span class="cov10" title="3">{
+        if s.db != nil </span><span class="cov10" title="3">{
+                return s.db.Close()
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// GetTraces retrieves traces from storage
+func (s *BadgerStore) GetTraces(ctx context.Context, limit int) ([]map[string]interface{}, error) <span class="cov1" title="1">{
+        var traces []map[string]interface{}
+
+        err := s.db.View(func(txn *badger.Txn) error </span><span class="cov1" title="1">{
+                opts := badger.DefaultIteratorOptions
+                opts.PrefetchSize = 10
+                opts.Prefix = []byte("trace:")
+                it := txn.NewIterator(opts)
+                defer it.Close()
+
+                count := 0
+                for it.Rewind(); it.Valid() &amp;&amp; count &lt; limit; it.Next() </span><span class="cov0" title="0">{
+                        item := it.Item()
+                        key := item.Key()
+
+                        // Only process trace keys
+                        if string(key[:6]) == "trace:" </span><span class="cov0" title="0">{
+                                err := item.Value(func(val []byte) error </span><span class="cov0" title="0">{
+                                        // Parse the stored trace data
+                                        var trace map[string]interface{}
+                                        if err := json.Unmarshal(val, &amp;trace); err != nil </span><span class="cov0" title="0">{
+                                                return fmt.Errorf("failed to unmarshal trace: %w", err)
+                                        }</span>
+                                        <span class="cov0" title="0">traces = append(traces, trace)
+                                        count++
+                                        return nil</span>
+                                })
+                                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                                        return err
+                                }</span>
+                        }
+                }
+
+                <span class="cov1" title="1">return nil</span>
+        })
+
+        <span class="cov1" title="1">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to get traces: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">return traces, nil</span>
+}
+
+// GetTrace retrieves a specific trace by ID
+func (s *BadgerStore) GetTrace(ctx context.Context, id string) (map[string]interface{}, error) <span class="cov1" title="1">{
+        var trace map[string]interface{}
+
+        err := s.db.View(func(txn *badger.Txn) error </span><span class="cov1" title="1">{
+                key := []byte("trace:" + id)
+                item, err := txn.Get(key)
+                if err != nil </span><span class="cov0" title="0">{
+                        if err == badger.ErrKeyNotFound </span><span class="cov0" title="0">{
+                                return fmt.Errorf("trace not found")
+                        }</span>
+                        <span class="cov0" title="0">return err</span>
+                }
+
+                <span class="cov1" title="1">return item.Value(func(val []byte) error </span><span class="cov1" title="1">{
+                        return json.Unmarshal(val, &amp;trace)
+                }</span>)
+        })
+
+        <span class="cov1" title="1">if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return trace, nil</span>
+}
+
+// StoreTrace stores a trace in the database
+func (s *BadgerStore) StoreTrace(ctx context.Context, trace map[string]interface{}) error <span class="cov1" title="1">{
+        // Extract trace ID
+        traceID, ok := trace["trace_id"].(string)
+        if !ok </span><span class="cov0" title="0">{
+                return fmt.Errorf("trace_id is required")
+        }</span>
+
+        // Serialize trace to JSON
+        <span class="cov1" title="1">data, err := json.Marshal(trace)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to marshal trace: %w", err)
+        }</span>
+
+        // Store in BadgerDB
+        <span class="cov1" title="1">key := []byte("trace:" + traceID)
+        return s.db.Update(func(txn *badger.Txn) error </span><span class="cov1" title="1">{
+                return txn.Set(key, data)
+        }</span>)
+}
+
+// GetStats retrieves storage statistics
+func (s *BadgerStore) GetStats(ctx context.Context) (map[string]interface{}, error) <span class="cov1" title="1">{
+        var totalTraces, totalSpans int
+        var storageSize int64
+
+        err := s.db.View(func(txn *badger.Txn) error </span><span class="cov1" title="1">{
+                opts := badger.DefaultIteratorOptions
+                opts.Prefix = []byte("trace:")
+                it := txn.NewIterator(opts)
+                defer it.Close()
+
+                for it.Rewind(); it.Valid(); it.Next() </span><span class="cov0" title="0">{
+                        item := it.Item()
+                        key := item.Key()
+
+                        if string(key[:6]) == "trace:" </span><span class="cov0" title="0">{
+                                totalTraces++
+
+                                // Count spans in this trace
+                                err := item.Value(func(val []byte) error </span><span class="cov0" title="0">{
+                                        var trace map[string]interface{}
+                                        if err := json.Unmarshal(val, &amp;trace); err != nil </span><span class="cov0" title="0">{
+                                                return err
+                                        }</span>
+
+                                        <span class="cov0" title="0">if spans, ok := trace["spans"].([]interface{}); ok </span><span class="cov0" title="0">{
+                                                totalSpans += len(spans)
+                                        }</span>
+
+                                        <span class="cov0" title="0">storageSize += int64(len(val))
+                                        return nil</span>
+                                })
+                                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                                        return err
+                                }</span>
+                        }
+                }
+
+                <span class="cov1" title="1">return nil</span>
+        })
+
+        <span class="cov1" title="1">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to get stats: %w", err)
+        }</span>
+
+        // Convert storage size to human readable format
+        <span class="cov1" title="1">storageSizeMB := float64(storageSize) / (1024 * 1024)
+        storageSizeStr := fmt.Sprintf("%.2f MB", storageSizeMB)
+
+        return map[string]interface{}{
+                "total_traces": totalTraces,
+                "total_spans":  totalSpans,
+                "storage_size": storageSizeStr,
+        }, nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
