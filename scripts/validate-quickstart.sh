@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 SERVER_PORT=8080
 SERVER_HOST="localhost"
 PYTHON_VENV="sdk/python/venv"
-STATUS_FILE="traceloop-website/status.json"
+STATUS_FILE="../traceloop-website/status.json"
 
 # Status tracking variables
 GO_INSTALL_STATUS="unknown"
@@ -81,21 +81,28 @@ test_docker_installation() {
     log_info "Testing Docker installation method..."
     if command -v docker &> /dev/null; then
         if docker ps &> /dev/null; then
-            if docker run --rm -d --name traceloop-test -p 8081:8080 ghcr.io/traceloop-ai/traceloop:latest &> /dev/null; then
-                sleep 5
-                if curl -s http://localhost:8081/health &> /dev/null; then
-                    DOCKER_INSTALL_STATUS="working"
-                    log_success "Docker installation works"
+            # Build the Docker image locally
+            if docker build -f docker/Dockerfile -t traceloop-test:latest . &> /dev/null; then
+                if docker run --rm -d --name traceloop-test -p 8081:8080 traceloop-test:latest &> /dev/null; then
+                    sleep 5
+                    if curl -s http://localhost:8081/health &> /dev/null; then
+                        DOCKER_INSTALL_STATUS="working"
+                        log_success "Docker installation works"
+                    else
+                        DOCKER_INSTALL_STATUS="broken"
+                        DOCKER_INSTALL_NOTES="Container started but health check failed"
+                        log_error "Docker health check failed"
+                    fi
+                    docker stop traceloop-test &> /dev/null || true
                 else
                     DOCKER_INSTALL_STATUS="broken"
-                    DOCKER_INSTALL_NOTES="Container started but health check failed"
-                    log_error "Docker health check failed"
+                    DOCKER_INSTALL_NOTES="Failed to start container"
+                    log_error "Docker container failed to start"
                 fi
-                docker stop traceloop-test &> /dev/null || true
             else
                 DOCKER_INSTALL_STATUS="broken"
-                DOCKER_INSTALL_NOTES="Failed to start container"
-                log_error "Docker container failed to start"
+                DOCKER_INSTALL_NOTES="Failed to build Docker image"
+                log_error "Docker build failed"
             fi
         else
             DOCKER_INSTALL_STATUS="broken"
