@@ -1,7 +1,7 @@
 {
-    "last_updated": "2025-09-21T19:46:02Z",
-    "overall_status": "working",
-    "working_count": 10,
+    "last_updated": "2025-09-21T19:54:55Z",
+    "overall_status": "partial",
+    "working_count": 8,
     "total_count": 10,
     "tests": {
         "go_install": {
@@ -13,8 +13,8 @@
             "notes": ""
         },
         "homebrew_install": {
-            "status": "working",
-            "notes": "Homebrew available (tap not yet published)"
+            "status": "broken",
+            "notes": "Homebrew not installed"
         },
         "server_health": {
             "status": "working",
@@ -41,8 +41,8 @@
             "notes": ""
         },
         "test_script": {
-            "status": "working",
-            "notes": ""
+            "status": "broken",
+            "notes": "Test script failed to run"
         }
     }
 }
