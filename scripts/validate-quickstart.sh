@@ -16,7 +16,15 @@ NC='\033[0m' # No Color
 SERVER_PORT=8080
 SERVER_HOST="localhost"
 PYTHON_VENV="venv"
-STATUS_FILE="../traceloop-website/status.json"
+# Try different possible paths for status file
+if [ -d "../traceloop-website" ]; then
+    STATUS_FILE="../traceloop-website/status.json"
+elif [ -d "traceloop-website" ]; then
+    STATUS_FILE="traceloop-website/status.json"
+else
+    # Fallback to current directory if neither path exists
+    STATUS_FILE="status.json"
+fi
 
 # Status tracking variables
 GO_INSTALL_STATUS="unknown"
@@ -273,6 +281,9 @@ generate_status_report() {
     else
         overall_status="broken"
     fi
+    
+    # Ensure directory exists for status file
+    mkdir -p "$(dirname "$STATUS_FILE")"
     
     # Generate JSON status report
     cat > $STATUS_FILE << EOF
