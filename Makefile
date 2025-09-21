@@ -38,16 +38,16 @@ init: ## Initialize the project dependencies
 	@echo "$(BLUE)Initializing project dependencies...$(RESET)"
 	@go mod download
 	@go mod tidy
-	@cd sdk/python && $(PYTHON) -m venv $(VENV_DIR) && \
+	@$(PYTHON) -m venv $(VENV_DIR) && \
 		source $(VENV_DIR)/bin/activate && \
-		$(PIP) install -e ".[dev]"
+		$(PIP) install -e "sdk/python[dev]"
 	@echo "$(GREEN)✓ Dependencies initialized$(RESET)"
 
 deps: ## Install/update dependencies
 	@echo "$(BLUE)Installing dependencies...$(RESET)"
 	@go mod download
 	@go mod tidy
-	@cd sdk/python && $(PIP) install -e ".[dev]"
+	@source $(VENV_DIR)/bin/activate && $(PIP) install -e "sdk/python[dev]"
 	@echo "$(GREEN)✓ Dependencies updated$(RESET)"
 
 build: ## Build the Go binary
@@ -78,8 +78,8 @@ test-go: ## Run Go tests
 
 test-python: ## Run Python tests
 	@echo "$(BLUE)Running Python tests...$(RESET)"
-	@cd sdk/python && \
-		source $(VENV_DIR)/bin/activate && \
+	@source $(VENV_DIR)/bin/activate && \
+		cd sdk/python && \
 		pytest -v --cov=traceloop --cov-report=html --cov-report=term
 	@echo "$(GREEN)✓ Python tests completed$(RESET)"
 
@@ -102,8 +102,10 @@ fmt: ## Format code
 lint: ## Lint code
 	@echo "$(BLUE)Linting code...$(RESET)"
 	@golangci-lint run ./...
-	@cd sdk/python && \
-		source $(VENV_DIR)/bin/activate && \
+	@source $(VENV_DIR)/bin/activate && \
+		cd sdk/python && \
+		black --check . && \
+		isort --check-only . && \
 		flake8 . && \
 		mypy traceloop
 	@echo "$(GREEN)✓ Linting completed$(RESET)"
