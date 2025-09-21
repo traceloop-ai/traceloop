@@ -16,9 +16,15 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     
+    # Grant permissions for the workflow to push changes
+    permissions:
+      contents: write
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Set up Go
       uses: actions/setup-go@v4
